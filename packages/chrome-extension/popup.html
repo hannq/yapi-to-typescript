@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Yapi to TypeScript</title>
+  <link rel="stylesheet" href="lib/bootstrap/bootstrap.min.css">
   <link rel="stylesheet" href="popup.css">
+  <script src="lib/bootstrap/bootstrap.bundle.min.js"></script>
   <script src="lib/prettier.js"></script>
   <script src="lib/parser-typescript.js"></script>
   <script src="lib/parser-babel.js"></script>
@@ -14,7 +16,12 @@
   <script src="lib/monaco-editor/loader.js"></script>
 </head>
 <body>
-  <div id="container" class="container"></div>
+  <div id="wrapper" class="wrapper">
+    <div id="editor-wrapper" class="editor-wrapper"></div>
+    <div id="toolbar" class="toolbar">
+      <button id="copy-btn" type="button" class="btn btn-outline-primary copy-btn">Copy</button>
+    </div>
+  </div>
   <script src="popup.js"></script>
 </body>
 </html>

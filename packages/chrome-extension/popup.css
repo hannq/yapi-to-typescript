@@ -3,14 +3,33 @@ html, body {
   padding: 0;
 }
 
-.container {
-  width:800px;
-  height:600px;
+.wrapper {
+  width: 760px;
+  height: 480px;
 }
 
-.container.disabled {
+.wrapper {
+  position: relative;
+}
+
+.wrapper.disabled {
   width: auto;
   height: auto;
   white-space: nowrap;
   color: #f00;
+}
+
+.wrapper .editor-wrapper {
+  width: 100%;
+  height: 100%;
+}
+
+.wrapper .toolbar {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+}
+
+.wrapper .toolbar .copy-btn {
+
 }

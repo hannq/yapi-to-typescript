@@ -1,7 +1,10 @@
-const containerEle = document.getElementById('container');
+const wrapperEle = document.getElementById('wrapper');
+const editorWrapperEle = document.getElementById('editor-wrapper');
+const copyBtnEle = document.getElementById('copy-btn');
+const tooltip = new bootstrap.Tooltip(copyBtnEle, { title: '点击复制', placement: 'left' });
 
-(async function() {
-   const contentPromise = new Promise(async (resolve, reject) => {
+const contentPromise = new Promise(async (resolve, reject) => {
+  try {
     if (chrome.tabs) {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
       const [, host, id] = tab.url.match(/^([^:]*:\/\/[^/]*)\/project\/[^/]+\/interface\/api\/([^/]+)$/) || [];
@@ -15,7 +18,12 @@ const containerEle = document.getElementById('container');
           "mode": "cors",
           "credentials": "include"
         }).then(res => res.json());
-
+        const {
+          req_body_is_json_schema,
+          req_body_other,
+          res_body_is_json_schema,
+          res_body,
+        } = res?.data || {};
         const jsttCompileConfigOptions = {
           bannerComment: '',
           style: {
@@ -29,29 +37,52 @@ const containerEle = document.getElementById('container');
           },
         }
 
-        const reqStr = await jstt.compile(JSON.parse(res?.data?.req_body_other || '{}'), 'Resquest', jsttCompileConfigOptions);
-        const resStr = await jstt.compile(JSON.parse(res?.data?.res_body || '{}'), 'Response', jsttCompileConfigOptions);
+        const reqStr = req_body_is_json_schema ? await jstt.compile(JSON.parse(req_body_other || '{}'), 'Resquest', jsttCompileConfigOptions) : '';
+        const resStr = res_body_is_json_schema ? await jstt.compile(JSON.parse(res_body || '{}'), 'Response', jsttCompileConfigOptions) : '';
 
-        resolve(`${reqStr}${resStr}`)
+        resolve([
+          `/** 请求参数 */`,
+          reqStr,
+          `/** 返回值 */`,
+          resStr
+        ].join('\n'))
       } else {
-        containerEle.innerHTML = `当前页面不可用`;
-        containerEle.classList.add('disabled')
-        reject(`缺少 id`);
+        reject(new Error(`缺少 id`));
       }
-    } else resolve('');
-  })
+    } else reject(new Error(`非 chrome 插件环境 或 未获得 tabs 权限`));
+  } catch (err) {
+    console.err(err);
+    reject(new Error(`获取数据失败`));
+  }
+})
 
-  require.config({ paths: { vs: 'lib/monaco-editor' } });
-  
-  require(['vs/editor/editor.main'], async () => {
+copyBtnEle.addEventListener('click', async () => {
+  try {
+    const content = await contentPromise;
+    await navigator.clipboard.writeText(content);
+    tooltip.tip.querySelector('.tooltip-inner').textContent = '已复制';
+  } catch(err) {
+    if (typeof err === 'string') err = new Error(err || '复制失败');
+    tooltip.tip.querySelector('.tooltip-inner').textContent = err?.message || '复制失败';
+  }
+});
+
+require.config({ paths: { vs: 'lib/monaco-editor' } });
+
+require(['vs/editor/editor.main'], async () => {
+  try {
     const content = await contentPromise;
     const isSystemDarkTheme = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    monaco.editor.create(containerEle, {
+    monaco.editor.create(editorWrapperEle, {
       value: content,
       language: 'typescript',
       theme: isSystemDarkTheme ? 'vs-dark' : 'vs',
       readOnly: true,
       minimap: { enabled: false }
     });
-  });
-})();
+  } catch(err) {
+    console.error(err);
+    wrapperEle.innerHTML = `当前页面不可用！`;
+    wrapperEle.classList.add('disabled')
+  }
+});
