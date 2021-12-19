@@ -1,0 +1,15 @@
+{
+  "name": "Yapi to TypeScript",
+  "description": "a Yapi to typescript tool.",
+  "version": "0.0.0.1",
+  "manifest_version": 3,
+  "permissions": [
+    "tabs"
+  ],
+  "host_permissions": ["*://*\/*"],
+  "action": {
+    "default_title": "Yapi to TypeScript",
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  }
+}
