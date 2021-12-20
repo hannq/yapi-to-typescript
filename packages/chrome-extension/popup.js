@@ -42,9 +42,9 @@ const contentPromise = new Promise(async (resolve, reject) => {
 
         resolve([
           `/** 请求参数 */`,
-          reqStr,
+          formatComment2SingleLine(reqStr),
           `/** 返回值 */`,
-          resStr
+          formatComment2SingleLine(resStr)
         ].join('\n'))
       } else {
         reject(new Error(`缺少 id`));
@@ -86,3 +86,9 @@ require(['vs/editor/editor.main'], async () => {
     wrapperEle.classList.add('disabled')
   }
 });
+
+// ####################### utils #######################
+
+function formatComment2SingleLine(content = '') {
+  return content.replace(/\/\*([^/]*)\*\//mg, (_, p1) => `/** ${p1.replace(/[*\s\n]/gm, '')} */`)
+}
