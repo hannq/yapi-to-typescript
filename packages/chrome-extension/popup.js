@@ -79,7 +79,7 @@ require(['vs/editor/editor.main'], async () => {
       value: content,
       language: 'typescript',
       theme: isSystemDarkTheme ? 'vs-dark' : 'vs',
-      readOnly: false,
+      readOnly: true,
       minimap: { enabled: false }
     });
     media.addEventListener('change', (e) => {
