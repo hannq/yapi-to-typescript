@@ -1,7 +1,7 @@
 {
-  "name": "Yapi to TypeScript",
+  "name": "YApi2TS",
   "description": "a Yapi to typescript tool.",
-  "version": "0.0.0.1",
+  "version": "0.0.0.2",
   "manifest_version": 3,
   "permissions": [
     "tabs",
