@@ -3,6 +3,12 @@
   "description": "a Yapi to typescript tool.",
   "version": "0.0.0.2",
   "manifest_version": 3,
+  "cross_origin_embedder_policy": {
+    "value": "require-corp"
+  },
+  "cross_origin_opener_policy": {
+    "value": "same-origin"
+  },
   "permissions": [
     "tabs",
     "activeTab"
